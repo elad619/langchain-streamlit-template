@@ -21,9 +21,10 @@ Current conversation:
 Human: {{input}}
 Art piece:"""
 
+
 def load_chain(description):
     formatted_template = template.format(information=description)
-    llm = OpenAI(temperature=0)
+    llm = OpenAI(temperature=0, openai_api_key=st.secrets["openai_key"])
     PROMPT = PromptTemplate(
         input_variables=["history", "input"], template=formatted_template
     )
@@ -34,6 +35,7 @@ def load_chain(description):
         memory=ConversationBufferMemory(ai_prefix="Art piece")
     )
     return conversation
+
 
 # From here down is all the StreamLit UI.
 st.set_page_config(page_title="LangChain Demo", page_icon=":robot:")
@@ -55,7 +57,7 @@ art_piece = st.sidebar.selectbox(
     "Select an Art Piece", list(art_pieces.keys()), key="art_piece"
 )
 
-image_filepath=art_pieces[art_piece]["image_file_path"]
+image_filepath = art_pieces[art_piece]["image_file_path"]
 image = Image.open(image_filepath)
 st.image(image, caption=art_piece)
 st.header("Description")
